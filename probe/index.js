@@ -12,21 +12,24 @@ var climate = climatelib.use(tessel.port['A']);
 var socketStateLed = tessel.led[0].output(0);
 var readingStateLed = tessel.led[1].output(0);
 
-//if (!wifi.isConnected()) {
-//  console.log('Wifi is disconnected. Trying connecting.');
-//
-//  var wifiConfigs = configs.wifi;
-//  wifi.connect({
-//    security: wifiConfigs.security,
-//    ssid: wifiConfigs.ssid,
-//    password: wifiConfigs.password,
-//    timeout: 30 // in seconds
-// });
-//} else {
-//  console.log('wifi seems to be connected.');
-//}
-try{
+var selfConnectedWifi = false;
+
+try {
+  // check wifi status. If auto wifi connection is being attempted, disconnect
+  // it and reattempt wifi connection using the credentials available
+  if (wifi.isBusy()) {
+    setTimeout(checkAndSelfAttemptWifiConnection, 10000);
+  } else {
+    checkAndSelfAttemptWifiConnection();
+  }
+
   wifi.on('connect', function() {
+    if (!selfConnectedWifi) {
+      console.log('auto-wifi connection was established, attempting for self ' +
+          'connection.');
+      return;
+    }
+
     console.log('Wifi is now connected.');
 
     console.log('Attempting to connect to remote at ', configs.remote.socketUrl);
@@ -76,6 +79,7 @@ try{
   function getReading(callback) {
     if (climateReady) {
       readingStateLed.output(1);
+
       climate.readTemperature('c', function (err, temp) {
         temp = temp.toFixed(2);
         climate.readHumidity(function (err, humid) {
@@ -109,4 +113,33 @@ try{
 
 } catch(e) {
   console.log('App Error: ', e);
+}
+
+
+function checkAndSelfAttemptWifiConnection() {
+  if (wifi.isConnected()) {
+    console.log('Auto wifi connection succeeded. Disconnecting and ' +
+        're-attempting self connection.');
+
+    wifi.disconnect();
+    connectToWifi();
+  } else {
+    console.log('auto-wifi connection didn\'t succeed. Attempting ' +
+        'self-connection.');
+    connectToWifi();
+  }
+}
+
+function connectToWifi() {
+  // turn it to true to signal that the connect event to be generated next is
+  // from our own connection attempt
+  selfConnectedWifi = true;
+
+  var wifiConfigs = configs.wifi;
+  wifi.connect({
+    security: wifiConfigs.security,
+    ssid: wifiConfigs.ssid,
+    password: wifiConfigs.password,
+    timeout: 30 // in seconds
+  });
 }
