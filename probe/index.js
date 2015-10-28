@@ -9,6 +9,8 @@ var wifi = require('wifi-cc3000');
 var configs = require('./configs.json');
 var climatelib = require('climate-si7020');
 var climate = climatelib.use(tessel.port['A']);
+var socketStateLed = tessel.led[0].output(0);
+var readingStateLed = tessel.led[1].output(0);
 
 //if (!wifi.isConnected()) {
 //  console.log('Wifi is disconnected. Trying connecting.');
@@ -56,28 +58,31 @@ try{
     });
 
     socket.on('error', function() {
+      socketStateLed.output(0);
       console.log('Error - ', arguments);
     });
 
     socket.on('close', function(code, reason) {
+      socketStateLed.output(0);
       console.log('Socket CLOSED - ', code, reason);
     });
 
     socket.on('connect', function() {
+      socketStateLed.output(1);
       console.log('Socket CONNECTED.');
-    });
-
-    socket.on('disconnect', function() {
-      console.log('Socket disconnected - ', arguments);
     });
   });
 
   function getReading(callback) {
     if (climateReady) {
+      readingStateLed.output(1);
       climate.readTemperature('c', function (err, temp) {
         temp = temp.toFixed(2);
         climate.readHumidity(function (err, humid) {
           humid = humid.toFixed(2);
+
+          readingStateLed.output(0);
+
           console.log('Degrees:', temp + 'C', 'Humidity:', humid + '%RH');
           callback(temp, humid);
         });
@@ -96,6 +101,9 @@ try{
 
   climate.on('error', function(err) {
     climateReady = false;
+
+    readingStateLed.output(0);
+
     console.log('error connecting module', err);
   });
 

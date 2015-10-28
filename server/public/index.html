@@ -31,8 +31,14 @@
                 <li class="device-name">Device: {{deviceId}}</li>
                 <li ng-repeat="reading in deviceReadings | orderBy: 'epoch' : true">
                     {{reading.epoch | date : 'mediumTime'}}:
-                    <span class="temperature">{{reading.temperature}}°C</span>
-                    <span class="humidity">{{reading.humidity}}%RH</span>
+                    <span class="temperature">
+                        <span class="bold">{{reading.temperature}}</span>
+                        °C
+                    </span>
+                    <span class="humidity">
+                        <span class="bold">{{reading.humidity}}</span>
+                        %RH
+                    </span>
                 </li>
             </ul>
         </div>
@@ -41,6 +47,10 @@
     <style>
         .inline-block {
             display: inline-block;
+        }
+
+        .bold {
+            font-weight: bold;
         }
 
         .margin-right-50 {
@@ -57,13 +67,8 @@
         }
 
         .readings .temperature {
-            font-weight: bold;
             margin-left: 15px;
             margin-right: 15px;
-        }
-
-        .readings .humidity {
-            font-weight: bold;
         }
 
         .readings-section {
