@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tracker Admin</title>
+</head>
+<body ng-app="trackrAdmin">
+    <section ng-controller="ServerControlController">
+        <div class="inline-block margin-right-50">
+            <button ng-click="checkStatus()">Check Server</button>
+            <div>{{ping}}</div>
+        </div>
+        <div class="inline-block margin-right-50">
+            <input type="number" ng-model="duration">
+            <button ng-click="startProbeRequester()"
+                    ng-disabled="probeRequesterStarted">Start</button>
+            <div>{{startConfirmation}}</div>
+        </div>
+        <div class="inline-block">
+            <button ng-click="stopProbeRequester()"
+                    ng-diabled="!probeRequesterStarted">Stop</button>
+            <div>{{stopConfirmation}}</div>
+        </div>
+        <div class="readings-section">
+            <button ng-click="fetchReadings()">Get/Update Readings</button>
+            <div ng-show="fetchingReadings">Fetching readings...</div>
+            <button ng-click="toggleFetchReadings()">{{autoFetch ? 'Stop Auto Fetch' : 'Auto Fetch'}}</button>
+
+            <ul ng-repeat="(deviceId, deviceReadings) in readings"
+                class="readings">
+                <li class="device-name">Device: {{deviceId}}</li>
+                <li ng-repeat="reading in deviceReadings | orderBy: 'epoch' : true">
+                    {{reading.epoch | date : 'mediumTime'}}:
+                    <span class="temperature">{{reading.temperature}}°C</span>
+                    <span class="humidity">{{reading.humidity}}%RH</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <style>
+        .inline-block {
+            display: inline-block;
+        }
+
+        .margin-right-50 {
+            margin-right: 50px;
+        }
+
+        .device-name {
+            text-decoration: underline;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .readings li {
+            list-style-type: none;
+        }
+
+        .readings .temperature {
+            font-weight: bold;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        .readings .humidity {
+            font-weight: bold;
+        }
+
+        .readings-section {
+            margin-top: 20px;
+        }
+    </style>
+
+    <script src="js/libs/angular.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

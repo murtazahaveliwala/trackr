@@ -1,0 +1,14 @@
+{
+  "wifi": {
+    "ssid": "Ap76",
+    "password": "12345678",
+    "security": "wpa2"
+  },
+  "device": {
+    "id": "t1",
+    "description": "Tessel probe for reading temperature and humidity"
+  },
+  "remote": {
+    "socketUrl": "ws://192.168.43.147:9050"
+  }
+}
