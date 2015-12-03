@@ -3,44 +3,35 @@ body {
     font-size: 16px;
 }
 
-body,
-.add-dish-dialog,
-.add-hotel-dialog {
+body {
     background-color: #fffef2;
 }
+.inline-block {
+    display: inline-block;
+}
 
-#mainContainer {
-    width: 70%;
-    margin: 30px auto;
-    padding: 20px;
+.bold {
+    font-weight: bold;
+}
 
-    background-color: #fff596;
-    border: 1px solid #ffec40;
-    border-radius: 10px;
-    -webkit-box-shadow: 0px 0px 20px 0px rgba(61,61,61,1);
-    -moz-box-shadow: 0px 0px 20px 0px rgba(61,61,61,1);
-    box-shadow: 0px 0px 20px 0px rgba(61,61,61,1);
+.margin-right-50 {
+    margin-right: 50px;
+}
 
-    min-height: 700px;
+.device-name {
+    text-decoration: underline;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.readings li {
+    list-style-type: none;
+}
 
-    color: gray;
+.readings .temperature {
+    margin-left: 15px;
+    margin-right: 15px;
 }
-.hotel-item {
-    font-size: 0.8em;
-}
-.hotel-item .name,
-.hotel-item .area,
-#hotels .selected-dish {
-    color: black;
-    font-size: 1.2em;
-}
-.hotel-item .votes {
-    font-style: italic;
-}
-.hotel-item,
-.new-hotel {
-    font-size: 0.8em;
-}
-.new-hotel {
-    margin-top: 15px;
+
+.readings-section {
+    margin-top: 20px;
 }

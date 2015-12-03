@@ -1,7 +1,7 @@
 {
-  "name": "heroku-app",
-  "version": "0.0.1",
-  "description": "test app to try out server module development and deployment to heroku",
+  "name": "trackr-remote-app",
+  "version": "1.0",
+  "description": "Remote app to connect to various trackr probe to fetch temperature readings from them and provide frontend for it's analysis",
   "private": true,
   "main": "index.js",
   "scripts": {

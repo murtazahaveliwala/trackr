@@ -6,24 +6,21 @@
     '$http',
     '$timeout',
     function($scope, $http, $timeout) {
-      var MESSAGE_TIMEOUT = 1000;
+      var MESSAGE_TIMEOUT = 1000,
+          FETCH_TIMEOUT = 2000;
 
       $scope.ping = '';
       $scope.pingInProgress = false;
 
       $scope.checkStatus = function() {
-        console.log('checking...');
         $scope.pingInProgress = true;
 
         $http.get('/check').success(function(response) {
-          console.log('response received - ', response);
 
           $scope.ping = response;
           $scope.pingInProgress = false;
           resetMessage();
         }).error(function(response) {
-          console.log('response received - ', response);
-
           $scope.ping = -1;
           $scope.pingInProgress = false;
           console.log('Error checking server\'s status', response);
@@ -43,8 +40,6 @@
       $scope.probeRequesterStarted = false;
 
       $scope.startProbeRequester = function() {
-        console.log('sending start requester...');
-
         $scope.startInProgress = true;
         $scope.startConfirmation = '';
 
@@ -55,15 +50,11 @@
 
         $http.get('/start/' + duration).
             success(function(response) {
-              console.log('response received - ', response);
-
               $scope.startConfirmation = response;
               $scope.startInProgress = false;
               $scope.probeRequesterStarted = true;
               resetMessage();
             }).error(function(response) {
-              console.log('response received - ', response);
-
               $scope.startConfirmation = '';
               $scope.startInProgress = false;
               console.log('Error starting server\'s probe requester', response);
@@ -81,22 +72,16 @@
       $scope.stopInProgress = false;
 
       $scope.stopProbeRequester = function() {
-        console.log('sending stop requester...');
-
         $scope.stopInProgress = true;
         $scope.stopConfirmation = '';
 
         $http.get('/stop').
             success(function(response) {
-              console.log('response received - ', response);
-
               $scope.stopConfirmation = response;
               $scope.stopInProgress = false;
               $scope.probeRequesterStarted = false;
               resetMessage();
             }).error(function(response) {
-              console.log('response received - ', response);
-
               $scope.stopConfirmation = '';
               $scope.stopInProgress = false;
               console.log('Error stopping server\'s probe requester', response);
@@ -117,14 +102,10 @@
 
         $http.get('/readings').
             success(function(response) {
-              console.log('response received - ', response);
-
               $scope.readings = response;
               $scope.fetchingReadings = false;
             }).
             error(function(response) {
-              console.log('response received - ', response);
-
               $scope.fetchingReadings = false;
               console.log('Error receiving readings!', response);
             });
@@ -139,8 +120,8 @@
           fetcherTimeout = $timeout(function fetch() {
             $scope.fetchReadings();
 
-            fetcherTimeout = $timeout(fetch, 2000);
-          }, 2000);
+            fetcherTimeout = $timeout(fetch, FETCH_TIMEOUT);
+          }, FETCH_TIMEOUT);
         } else {
           $timeout.cancel(fetcherTimeout);
         }

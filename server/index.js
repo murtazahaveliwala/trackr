@@ -1,65 +1,57 @@
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var ws = require('nodejs-websocket');
+var express = require('express'),
+    expressApp = express(),
+    server = require('http').Server(expressApp),
+    ws = require('nodejs-websocket');
 
-var index = 0;
-var pollTimeoutId = undefined;
-var POLL_DURATION = 3000;
-var duration = undefined;
-var readings = {};
+var index = 0,
+    pollTimeoutId = undefined,
+    duration = undefined,
+    readings = {},
+    POLL_DURATION = 3000,
+    HTTP_PORT = 5000,
+    WEB_SOCKET_PORT = 9050;
 
-//var fakeReadings = {
-//  'tessel-probe-1': [{
-//    epoch: Date.now(),
-//    temperature: 37,
-//    humidity: 72
-//  }, {
-//    epoch: Date.now() + 1000,
-//    temperature: 37.1,
-//    humidity: 72.3
-//  }, {
-//    epoch: Date.now() + 2000,
-//    temperature: 37.1,
-//    humidity: 72.3
-//  }, {
-//    epoch: Date.now() + 3000,
-//    temperature: 37.2,
-//    humidity: 72.4
-//  }]
-//};
-//readings = fakeReadings;
+expressApp.set('port', HTTP_PORT);
 
-app.set('port', process.env.PORT || 5000);
+expressApp.use(express.static('public'));
 
-app.use(express.static('public'));
-
-var socketServer = ws.createServer(function(conn) {
-  conn.on('text', function(text) {
+// Create a web socket on WEB_SOCKET_PORT
+var socketServer = ws.createServer(function(connection) {
+  connection.on('text', function(text) {
     console.log('reading - ', text);
 
-    var data = JSON.parse(text);
-    recordReading(data);
+    recordReading(JSON.parse(text));
   });
-}).listen(9050, function() {
+}).listen(WEB_SOCKET_PORT, function() {
   console.log('Listening on 9050.');
 });
 
-server.listen(app.get('port'), function(err) {
+// Create a web socket on HTTP_PORT
+server.listen(expressApp.get('port'), function(err) {
   if (err) {
     console.log('Error creating server!', err);
   } else {
-    console.log('Server started at port ', app.get('port'));
+    console.log('Server started at port ', expressApp.get('port'));
   }
 });
 
-app.get('/check', function(req, res) {
+//////////// APIs to be used by frontend to interact
+/**
+ * Check API. Returns a number, incremented on each call, to test if the
+ * frontend is connected to the server or not
+ */
+expressApp.get('/check', function(req, res) {
   index++;
 
   res.send('' + index);
 });
 
-app.get('/start/:duration?', function(req, res) {
+/**
+ * Start Polling API. Starts polling on probes for readings. Can be provided
+ * with optional positive poll interval. Polling interval defaults to
+ * POLL_DURATION
+ */
+expressApp.get('/start/:duration?', function(req, res) {
   duration = req.params.duration || POLL_DURATION;
 
   startPolling();
@@ -67,14 +59,21 @@ app.get('/start/:duration?', function(req, res) {
   res.send(200, 'Polling initiated after every ' + duration + 'ms');
 });
 
-
-app.get('/stop', function(req, res) {
+/**
+ * Stop Polling API. Stops polling on probes for readings.
+ */
+expressApp.get('/stop', function(req, res) {
   stopPolling();
 
   res.send(200, 'Polling terminated.');
 });
 
-app.get('/readings/:dId?', function(req, res) {
+/**
+ * Get Readings API. Provides all the readings ever recorded from probes.
+ * Optionally can be provided a probe id if results are to be limited to a
+ * specific probe.
+ */
+expressApp.get('/readings/:dId?', function(req, res) {
   var response;
 
   if (req.params.dId) {
@@ -86,6 +85,10 @@ app.get('/readings/:dId?', function(req, res) {
   res.json(response);
 });
 
+////////////// Private APIs
+/**
+ * Clears poll timeout
+ */
 function stopPolling() {
   if (pollTimeoutId) {
     console.log('Stopping polling.');
@@ -95,6 +98,10 @@ function stopPolling() {
   }
 }
 
+/**
+ * Initiates a timeout for polling connected probes for temperature and humidity
+ * readings
+ */
 function startPolling() {
   if (!pollTimeoutId) {
     pollTimeoutId = setTimeout(function repeat() {
@@ -114,9 +121,11 @@ function startPolling() {
   }
 }
 
+/**
+ * Records readings, fetched from devices based on probe IDs
+ * @param data {Object}  Required.
+ */
 function recordReading(data) {
-  //console.log('Recording reading:', data);
-
   if (data.dId) {
     var dId = data.dId;
 
