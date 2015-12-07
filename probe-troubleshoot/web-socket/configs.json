@@ -1,0 +1,3 @@
+{
+  "socketUrl": "ws://<remote_ip>:<remote_web_socket_port>"
+}

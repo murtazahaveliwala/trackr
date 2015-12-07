@@ -1,0 +1,16 @@
+{
+  "name": "trackr-troubleshoot-sensor",
+  "version": "1.0.0",
+  "description": "Script to test if the probe is able to capture temperature and humidity readings locally from climate module or not",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "climate-si7020": "^0.1.1"
+  },
+  "keywords": [],
+  "author": "Murtaza Haveliwala <murtaza.sh@gmail.com>",
+  "license": "MIT"
+}

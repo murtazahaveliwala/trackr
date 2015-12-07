@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Murtaza Haveliwala <murtaza.sh@gmail.com>",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "dependencies": {
     "climate-si7020": "^0.1.1",
     "nodejs-websocket": "^1.4.0"

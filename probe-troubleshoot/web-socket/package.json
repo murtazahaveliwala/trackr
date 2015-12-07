@@ -1,6 +1,6 @@
 {
-  "name": "heroku-app",
-  "version": "0.0.1",
+  "name": "trackr-troubleshoot-webSocket",
+  "version": "1.0.0",
   "description": "test app to try out server module development and deployment to heroku",
   "private": true,
   "main": "index.js",

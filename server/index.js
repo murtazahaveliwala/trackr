@@ -57,7 +57,7 @@ expressApp.get('/start/:duration?', function(req, res) {
 
   startPolling();
 
-  res.send(200, 'Polling initiated after every ' + duration + 'ms');
+  res.send(200, '\nPolling initiated after every ' + duration + 'ms');
 });
 
 /**
@@ -66,7 +66,7 @@ expressApp.get('/start/:duration?', function(req, res) {
 expressApp.get('/stop', function(req, res) {
   stopPolling();
 
-  res.send(200, 'Polling terminated.');
+  res.send(200, '\nPolling terminated.');
 });
 
 /**
@@ -92,7 +92,7 @@ expressApp.get('/readings/:dId?', function(req, res) {
  */
 function stopPolling() {
   if (pollTimeoutId) {
-    console.log('Stopping polling.');
+    console.log('\nStopping polling.');
 
     clearTimeout(pollTimeoutId);
     pollTimeoutId = undefined;
@@ -108,7 +108,7 @@ function startPolling() {
     pollTimeoutId = setTimeout(function repeat() {
       var rId = Date.now();
 
-      console.log('Polling devices. ', rId, ' duration: ', duration);
+      console.log('\nPolling devices (', rId, ')');
 
       socketServer.connections.forEach(function(conn) {
         //console.log('sending message for reading to ', conn);
