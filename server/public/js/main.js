@@ -7,7 +7,7 @@
     '$timeout',
     function($scope, $http, $timeout) {
       var MESSAGE_TIMEOUT = 1000,
-          FETCH_TIMEOUT = 2000;
+          FETCH_TIMEOUT = 4000;
 
       $scope.ping = '';
       $scope.pingInProgress = false;

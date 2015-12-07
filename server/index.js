@@ -1,15 +1,16 @@
 var express = require('express'),
     expressApp = express(),
     server = require('http').Server(expressApp),
-    ws = require('nodejs-websocket');
+    ws = require('nodejs-websocket'),
+    configs = require('./configs.json');
 
 var index = 0,
     pollTimeoutId = undefined,
     duration = undefined,
     readings = {},
     POLL_DURATION = 3000,
-    HTTP_PORT = 5000,
-    WEB_SOCKET_PORT = 9050;
+    HTTP_PORT = configs.ports.webServer,
+    WEB_SOCKET_PORT = configs.ports.webSocket;
 
 expressApp.set('port', HTTP_PORT);
 
@@ -23,7 +24,7 @@ var socketServer = ws.createServer(function(connection) {
     recordReading(JSON.parse(text));
   });
 }).listen(WEB_SOCKET_PORT, function() {
-  console.log('Listening on 9050.');
+  console.log('Listening on ' + WEB_SOCKET_PORT);
 });
 
 // Create a web socket on HTTP_PORT
